@@ -10,15 +10,16 @@ CentOS_Check_Script.sh
 README.txt
 ```
 
-**操作说明:**
+**操作说明**
+
 ```bash
 #执行CentOS-Check_Script.sh脚本文件进行检查,命令格式如下
 sudo sh CentOS_Check_Script.sh | tee check_`date +%Y%m%d_%H%M%S`.txt
 ```
 
-** 检查说明:**
-此脚本是按三级等保要求，编写的一键检查脚本，此脚本只适合linux分支中的redhat、centos，运行脚本将结果输出到
-自定义的文件中，脚本结果需要人为检查。
+** 检查说明**
+
+此脚本是按三级等保要求，编写的一键检查脚本，此脚本只适合linux分支中的redhat、centos，运行脚本将结果输出到自定义的文件中，脚本结果需要人为检查。
 
 此检查脚本包含以下几块内容：
 - 系统基本信息
@@ -38,19 +39,19 @@ sudo sh CentOS_Check_Script.sh | tee check_`date +%Y%m%d_%H%M%S`.txt
 ## Protective_Script
 
 ```bash
-#包含2个文件:
+#包含2个文件
 CentOS_Protective_Script.sh
 README.txt
 ```
 
-**操作说明:**
+**操作说明**
 ```bash
-执行CentOS_Protective_Script.sh脚本文件进行加固,命令格式如下
+#执行CentOS_Protective_Script.sh脚本文件进行加固,命令格式如下
 sudo sh CentOS_Protective_Script.sh
-执行完成后,请按脚本提示重启相应服务
+#执行完成后,请按脚本提示重启相应服务
 ```
 
-**功能说明:**
+**功能说明**
 -  一键进行全部加固
 -  设置密码复杂度
 -  添加eproot账号
