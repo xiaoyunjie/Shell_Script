@@ -17,7 +17,7 @@ README.txt
 sudo sh CentOS_Check_Script.sh | tee check_`date +%Y%m%d_%H%M%S`.txt
 ```
 
-** 检查说明**
+**检查说明**
 
 此脚本是按三级等保要求，编写的一键检查脚本，此脚本只适合linux分支中的redhat、centos，运行脚本将结果输出到自定义的文件中，脚本结果需要人为检查。
 
