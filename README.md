@@ -60,3 +60,8 @@ sudo sh CentOS_Protective_Script.sh
 -  更改SSH端口
 -  登入失败处理
 -  还原配置文件
+
+
+##############
+
+如果对你有帮助，请来一波star
