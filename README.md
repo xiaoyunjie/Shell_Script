@@ -62,6 +62,6 @@ sudo sh CentOS_Protective_Script.sh
 -  还原配置文件
 
 
-##############
-
+```bash
 如果对你有帮助，请来一波star
+```
