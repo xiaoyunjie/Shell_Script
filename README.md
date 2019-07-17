@@ -1,4 +1,4 @@
-# Linux 系统检测和加固脚本
+# Linux 系统检测和加固脚本 (如果对你有帮助，请来一波star)
 
 **主要是为了Linux系统的安全，通过脚本对Linux系统进行一键检测和一键加固**
 
@@ -62,4 +62,3 @@ sudo sh CentOS_Protective_Script.sh
 -  还原配置文件
 
 
-### 如果对你有帮助，请来一波star
