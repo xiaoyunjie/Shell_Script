@@ -222,7 +222,7 @@ echo "用户错误登入列表:"
 lastb | head > /dev/null
 if [ $? == 1 ];then
     echo ">>>无用户错误登入列表"
-then
+else
     echo ">>>用户错误登入--------[需调整]"
     lastb | head 
 fi
