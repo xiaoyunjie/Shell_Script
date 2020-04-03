@@ -1,6 +1,7 @@
 #!/bin/bash
 ##Filename:     CentOS_Check_Script.sh
-##Date:         2019-03-01
+##Created date: 2019-03-01
+##Updated date: 2020-04-03
 ##Description:  Security detection script
 
 echo "##########################################################################"
