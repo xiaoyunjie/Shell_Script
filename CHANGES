@@ -1,3 +1,9 @@
+Date:   2019-04-13
+文件更新 ： CentOS_Check.sh
+1. 修改文件名 CentOS_Check_Script.sh 为 CentOS_Check.sh
+              Centos_Protective_Script.sh 为 Centos_Reinforce.sh
+2. 优化检查脚本, 并增加更多检测项,具体检测项可以查看readme
+
 Date:	2019-03-22
 文件更新 ： CentOS_Protective_Script.sh
 解决sshd_config文件在被修改过PermitRootLogin yes 后，无法判断，并直接注入PermitRootLogin no，导致配置命令冲突，无法实现禁止root远程

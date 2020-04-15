@@ -1,7 +1,7 @@
 #!/bin/bash
 ##Filename:     OS-centOS-Protective_v0.1.sh
-##Author:	Browser
-##Date:         2019-02-24
+##Author:	    suleo
+##Date:         2020-04-10
 ##Description:  Operating system security reinforcement
 
 
