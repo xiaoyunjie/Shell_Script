@@ -1,9 +1,4 @@
 #!/bin/bash
-##Filename:     OS-centOS-Protective_v0.1.sh
-##Author:	    suleo
-##Date:         2020-04-10
-##Description:  Operating system security reinforcement
-
 
 #########################variables############################
 restart_flag=1
@@ -131,7 +126,7 @@ function create_user(){
     echo -e "\033[1;31m	   3、Create eproot account	\033[0m"
     echo "#########################################################################################"
     read -p "Be sure to create an eproot account?[y/n]:"
-    case $REPLY in 
+    case $REPLY in
     y)
 	grep -i 'eproot' /etc/passwd
         if [ $? == 0 ];then
@@ -143,20 +138,20 @@ function create_user(){
 		echo -e "\033[1;31m	eproot account created successfully	    \033[0m"
 		grep -i "eproot" /etc/sudoers
 		if [ $? != 0 ];then
-		    chmod u+w /etc/sudoers > /dev/null 
+		    chmod u+w /etc/sudoers > /dev/null
 		    sed -i '/^root.*ALL=(ALL).*$/a\eproot  ALL=(ALL)       NOPASSWD:ALL' /etc/sudoers > /dev/null
 		    if [ $? == 0 ];then
 			echo -e "\033[37;5m	    [Permissions set success]	\033[0m"
 		    else
 			echo -e "\033[31;5m	    [Permissions set failed]	\033[0m"
 		    fi
-		    chmod u-w /etc/sudoers > /dev/null 
+		    chmod u-w /etc/sudoers > /dev/null
 		else
 		    echo -e "\033[1;31m	    Permissions have already been set	    \033[0m"
 		fi
 	    else
 		echo -e "\033[1;31m	    eproot account created failed	    \033[0m"
-		exit 1 
+		exit 1
 	    fi
 	fi
 	;;
@@ -185,7 +180,7 @@ function remote_login(){
         echo 'Protocol 2' >> /etc/ssh/sshd_config
         echo -e "\033[37;5m	    [Success: Set SSH Protocol to 2]	    \033[0m"
     fi
-    
+
     read -p "Disable root remote login?[y/n](Please make sure you have created at least one another account):"
     case $REPLY in
     y)
@@ -243,7 +238,7 @@ function set_history_tmout(){
         fi
         echo -e '\033[1;31m	    HISTTIMEFORMAT has been set to "Number-Time-User-Command"	    \033[0m'
 	#TIME_OUT
-        read -p "set shell TMOUT?[300-600]seconds:" tmout 
+        read -p "set shell TMOUT?[300-600]seconds:" tmout
 	: ${tmout:=600}
         grep -i "^TMOUT=" /etc/profile	> /dev/null
         if [ $? == 0 ];then
@@ -326,7 +321,7 @@ logonconfig=/etc/pam.d/sshd
         else
 	   sed -i '/^#%PAM-1.0/a\auth required pam_tally2.so deny=3 unlock_time=300 even_deny_root root_unlock_time=300' $logonconfig > /dev/null
         fi
-    
+
 	if [ $? == 0 ];then
 	    echo "#########################################################################################"
 	    echo -e "\033[37;5m	    [Logon failure handling set success]	\033[0m"
