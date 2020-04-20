@@ -97,6 +97,7 @@ if [ $zombies == 1 ];then
     log "  无僵尸进程"
 else
     log "  有僵尸进程"
+    log "  请使用ps -ef | grep zombie查看"
 fi
 log "=============================dividing line================================"
 log "耗CPU最多的进程:"
@@ -152,7 +153,7 @@ if [ "$FIND" == "" ];
 then
     log "2.未配置密码强度检查,不安全"
     log "建议:"
-    log "  执行 echo \"passwd requisite pam_cracklib.so difok=3 minlen=8 ucrediit=-1 lcredit=-1 dcredit=-1\">> /etc/pam.d/systemd-auth 设置密码需要包含大小写字母及数字，且长度至少为8"
+    log "  请按照系统加固文档2.1.2 进行配置"
 else
     log "2.已配置密码强度检查,安全"
 fi
@@ -210,7 +211,7 @@ then
     log "检查结果如下:"
     log "  $parent"
     log "建议:"
-    log "   环境变量中不要带有父目录(..)"
+    log "   环境变量中不要带有父目录(..),请使用绝对路径或删除该环境变量"
 else
     log "6.环境变量未包含父目录,安全"
 fi
@@ -225,7 +226,8 @@ then
     log "检查结果如下:"
     log "  $dir"
     log "建议:"
-    log "   上述目录权限过低,请使用chmod 命令修改目录权限"
+    log "   上述目录权限过高,请使用chmod 命令修改目录权限为744"
+    log "   chmod -R 744 XX"
 else
     log "7.未发现组权限为777的目录,安全"
 fi
@@ -303,7 +305,7 @@ log "10. 检查重要文件和目录的权限"
 log "检查结果如下:"
 log "  $content"
 log "建议:"
-log "   请仔细检查以上文件和目录的权限,如果权限太低,请及时修改"
+log "   请仔细检查以上文件和目录的权限,如果权限过高,请及时修改"
 
 
 # 11.检查未授权的SUID/SGID文件
@@ -323,7 +325,11 @@ then
     log "检查结果如下:"
     log "  $files"
     log "建议:"
-    log "   请检查上述目录/文件是否可疑,如果可疑,请及时删除"
+    log "   请检查上述文件是否可疑,如果可疑,请及时删除"
+    log "   或修改权限为744并去除suid与sgid设置"
+    log "   chmod  u-s  /XXX/XX"
+    log "   chmod  g-s  /XXX/XX"
+    log "   chmod  744  /XXX/XX"
 else
     log "11.未发现存在SUID和SGID的文件,安全"
 fi
@@ -344,7 +350,8 @@ then
     log "检查结果如下:"
     log "  $files"
     log "建议:"
-    log "   请检查上述目录是否有必要任何人都可写,如非必要,请及时修改权限"
+    log "   请及时修改权限为744"
+    log "   chmod -R 744 XX.XX"
 else
     log "12.未发现任何人都有写权限的目录,安全"
 fi
@@ -366,7 +373,8 @@ then
     log "检查结果如下:"
     log "  $files"
     log "建议:"
-    log "   请检查上述文件是否有必要任何人都可写,如非必要,请及时修改权限"
+    log "   请修改权限为744"
+    log "   chmod 744 XX.XX"
 else
     log "13.未发现任何人都有写权限的文件,安全"
 fi
@@ -387,7 +395,8 @@ then
     log "检查结果如下:"
     log "  $files"
     log "建议:"
-    log "   请为上述文件增加属主,如有可疑文件,请及时删除"
+    log "   检查是否为可疑文件,可以文件请删除"
+    log "   或修改可疑文件的权限 chmod 744 XX.XX"
 else
     log "14.未发现没有属主的文件,安全"
 fi
@@ -412,6 +421,7 @@ then
     log "  $files"
     log "建议:"
     log "   请检查上述文件是否可疑,如果可疑,请及时删除"
+    log "   或修改可疑文件的权限 chmod 744 XX.XX"
 else
     log "15.未发现可疑隐藏文件,安全"
 fi
@@ -435,9 +445,9 @@ ssh=`systemctl status sshd | grep running`
 telnet=`systemctl status telnet | grep running`
 if [ "$ssh" != "" ] && [ "$telnet" == "" ]
 then
-    log "17.ssh telnet 状态正确,安全"
+    log "17.ssh telnet 未开启,安全"
 else
-    log "17.ssh telnet 状态不正确,不安全"
+    log "17.ssh telnet 开启,不安全"
     log "检查结果如下:"
     if [ "$ssh" == "" ]
     then
@@ -517,7 +527,7 @@ then
     log "检查结果如下:"
     log "  $process2"
     log "建议:"
-    log "   请检查上述服务,尽量关闭不必要的服务"
+    log "   请检查上述服务,请确认是否需要关闭"
     log "   注:使用命令\"chkconfig --level $level <服务名>\" 进行关闭"
 else
     log "19.无运行的服务,跳过"
@@ -525,8 +535,8 @@ fi
 
 # 20. 检查core dump 状态
 echo "20.检查core dump 状态 "
-SOFTFIND=`cat /etc/security/limits.conf | grep -v "^#" | grep "* soft core 0"`
-HARDFIND=`cat /etc/security/limits.conf | grep -v "^#" | grep "* hard core 0"`
+SOFTFIND=`cat /etc/security/limits.conf | grep "^*.*soft.*core.*0"`
+HARDFIND=`cat /etc/security/limits.conf | grep "^*.*hard.*core.*0"`
 if [ "$SOFTFIND" != "" ] && [ "$HARDFIND" != "" ]
 then
     log "20.core dump 检查正常,安全"
@@ -579,7 +589,7 @@ then
     log "检查结果如下:"
     log "  非默认账户:"$account
     log "建议:"
-    log "  请确认账户是否为可以账号,如非必要建议删除该账号"
+    log "  如非必要请删除该账号"
 else
     log "22.没有非法账户存在,安全"
 fi
@@ -590,7 +600,7 @@ echo "23.检查ftp服务状态"
 if pa aux |grep ftp;then
     log "23.ftp服务状态检测,不安全"
     log "建议:"
-    log "    ftp服务正在运行,请确认是否需要关闭"
+    log "    ftp服务正在运行,请关闭"
 else
     log "23.ftp服务未开启,安全"
 fi
@@ -616,20 +626,20 @@ fi
 
 
 # 25. 检查icmp状态
-echo "25.检查icmp配置"
-icmp_arg=`cat /etc/sysctl.conf |grep "net.ipv4.icmp_echo_ignore_all = 1" |wc -l`
-if [ $icmp_arg == 0 ]
-then
-    log "25.检查icmp配置,未忽略icmp广播,不安全"
-    log "检查结果如下:"
-    log "  net.ipv4.icmp_echo_ignore_all参数设置错误或不存在"
-    log "建议:"
-    log "    在/etc/sysctl.conf中添加:"
-    log "    net.ipv4.icmp_echo_ignore_all = 1"
-    log "    重新加载配置: /sbin/sysctl -e -p /etc/sysctl.conf"
-else
-    log "25.检查icmp参数配置,安全"
-fi
+echo "25.检查icmp配置,跳过"
+#icmp_arg=`cat /etc/sysctl.conf |grep "net.ipv4.icmp_echo_ignore_all = 1" |wc -l`
+#if [ $icmp_arg == 0 ]
+#then
+#    log "25.检查icmp配置,未忽略icmp广播,不安全"
+#    log "检查结果如下:"
+#    log "  net.ipv4.icmp_echo_ignore_all参数设置错误或不存在"
+#    log "建议:"
+#    log "    在/etc/sysctl.conf中添加:"
+#    log "    net.ipv4.icmp_echo_ignore_all = 1"
+#    log "    重新加载配置: /sbin/sysctl -e -p /etc/sysctl.conf"
+#else
+#    log "25.检查icmp参数配置,安全"
+#fi
 
 # 26. 检查定时任务
 echo "26.检查定时任务"
@@ -655,6 +665,8 @@ then
     log "  系统信息:"$banner_info
     log "建议:"
     log "  删除/etc/motd文件中关于系统的信息"
+    log "  设置/etc/motd的权限为744"
+    log "  chmod 744 XX.XX"
 else
     log "27.检查banner信息配置,安全"
 fi
@@ -706,5 +718,3 @@ fi
 
 
 echo "检查完成, 请仔细阅读${logfile}文件"
-
-
