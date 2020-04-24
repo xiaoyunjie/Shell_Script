@@ -85,7 +85,7 @@ function recover(){
 ###########################口令复杂度/有效期设置、删除空密码账户(不删除用户目录)############################
 function password(){
     echo "#########################################################################################"
-    echo -e "\033[1;36m	   2、 认证安全:设置密码有效期、复杂度、空口令账户删除	\033[0m"
+    echo -e "\033[1;36m	   2、 Password security :Set password validity, complexity, and detect empty password account	\033[0m"
     echo "#########################################################################################"
 
 # 确认系统版本
@@ -425,6 +425,7 @@ function logon(){
     echo "#########################################################################################"
     echo -e "\033[1;36m     10、Set other \n1.禁用ftp\n2.禁用telnet\n3.禁止root以外用户设置banner信息      \033[0m"
     echo "#########################################################################################"
+# 禁用ftp
     check_ftp=`ps aux |grep ftp`
     if [ $check_ftp ]
     then
@@ -439,6 +440,7 @@ function logon(){
     else
         echo -e "\033[31;5m     [success] FTP is disable already \033[0m"
     fi
+# 禁用telnet
     check_telnet=`ps aux |grep telnet`
     if [ $check_telnet ]
     then
@@ -453,7 +455,7 @@ function logon(){
     else
         echo -e "\033[31;5m     [success] Telnet is disable already \033[0m"
     fi
-
+# 设置banner信息相关文件权限为644
     chmod 644 /etc/issue
     chmod 644 /etc/issue.net
     chmod 644 /etc/motd
