@@ -49,7 +49,7 @@ log() {
 }
 log "扫描时间：${date}"
 
-echo "正在收集系统基本信息...."
+echo -e "\033[33;1m正在收集系统基本信息....\033[0m"
 log ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>系统基本信息<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 hostname=$(uname -n)
 system=$(cat /etc/os-release | grep "^NAME" | awk -F\" '{print $2}')
@@ -73,7 +73,7 @@ log "CPU核数:          $cpu"
 log "机器型号:         $machinemodel"
 log "系统时间:         $date"
 log " "
-echo "正在收集系统资源使用情况...."
+echo -e "\033[33;1m 正在收集系统资源使用情况....\033[0m"
 log ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>资源使用情况<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 summemory=$(free -h |grep "Mem:" | awk '{print $2}')
 freememory=$(free -h |grep "Mem:" | awk '{print $4}')
@@ -130,10 +130,10 @@ service_list=$(systemctl list-unit-files | grep enabled)
 log "  $service_list"
 log " "
 
-echo "系统安全基线检测开始...."
+echo -e "\033[33;1m 系统安全基线检测开始....\033[0m"
 log ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>开始系统安全检查<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 # 1. 检测密码有效期设置
-echo " 1.检测密码有效期设置"
+echo -e "\033[33;1m 1.检测密码有效期设置\033[0m"
 PASS_MAX_DAYS=`cat /etc/login.defs | grep "PASS_MAX_DAYS" | grep -v \# | awk '{print$2}'`
 PASS_MIN_DAYS=`cat /etc/login.defs | grep "PASS_MIN_DAYS" | grep -v \# | awk '{print$2}'`
 PASS_WARN_AGE=`cat /etc/login.defs | grep "PASS_WARN_AGE" | grep -v \# | awk '{print$2}'`
@@ -147,7 +147,7 @@ else
 fi
 
 # 2. 检测密码强度检查配置
-echo " 2.检测密码强度检查配置"
+echo -e "\033[33;1m 2.检测密码强度检查配置 \033[0m"
 FIND=`cat /etc/pam.d/system-auth | grep 'password.*requisite.*pam_cracklib.so'`
 if [ "$FIND" == "" ];
 then
@@ -159,7 +159,7 @@ else
 fi
 
 # 3. 检查空口令账号
-echo " 3.检查空口令账号"
+echo -e "\033[33;1m 3.检查空口令账号\033[0m"
 NULLF=`awk -F: '($2 == "") {print $1}' /etc/shadow`
 if [ "$NULLF" != "" ];
 then
@@ -173,7 +173,7 @@ else
 fi
 
 # 4.检查账户锁定配置
-echo " 4.检查账户锁定配置"
+echo -e "\033[33;1m 4.检查账户锁定配置 \033[0m"
 FIND=`cat /etc/pam.d/sshd | grep 'auth.*required.*pam_tally2.so'`
 if [ "$FIND" == "" ];
 then
@@ -187,7 +187,7 @@ fi
 
 
 # 5.检查除root之外的账户UID为0
-echo " 5.检查除root之外的账户UID为0"
+echo -e "\033[33;1m 5.检查除root之外的账户UID为0 \033[0m"
 mesg=`awk -F: '($3==0) { print $1 }' /etc/passwd | grep -v root`
 if [ "$mesg" != "" ]
 then
@@ -203,7 +203,7 @@ else
 fi
 
 # 6.检查环境变量包含父目录
-echo " 6.检查环境变量包含父目录"
+echo -e "\033[33;1m 6.检查环境变量包含父目录 \033[0m"
 parent=`echo $PATH | egrep '(^|:)(\.|:|$)'`
 if [ "$parent" != "" ]
 then
@@ -217,7 +217,7 @@ else
 fi
 
 # 7.检查环境变量包含组权限为777的目录
-echo " 7.检查环境变量包含组权限为777的目录"
+echo -e "\033[33;1m 7.检查环境变量包含组权限为777的目录 \033[0m"
 part=`echo $PATH | tr ':' ' '`
 dir=`find $part -type d \( -perm -002 -o -perm -020 \) -ls`
 if [ "$dir" != "" ]
@@ -233,7 +233,7 @@ else
 fi
 
 # 8.远程连接安全性
-echo " 8.远程连接安全性"
+echo -e "\033[33;1m 8.远程连接安全性 [0m"
 netrc=`find / -name .netrc`
 rhosts=`find / -name .rhosts`
 failed="0"
@@ -260,7 +260,7 @@ then
 fi
 
 # 9.检查umask配置
-echo " 9.检查umask配置"
+echo -e "\033[33;1m 9.检查umask配置 \033[0m"
 bsetting=`cat /etc/profile /etc/bash.bashrc | grep -v "^#" | grep "umask"| awk '{print $2}'`
 if [ "$bsetting" == "" ]
 then
@@ -283,7 +283,7 @@ else
 fi
 
 # 10.检查重要文件和目录的权限
-echo "10.检查重要文件和目录的权限"
+echo -e "\033[33;1m 10.检查重要文件和目录的权限 \033[0m"
 content=
 p=`ls -ld /etc`
 content=`echo -e "$content\n$p"`
@@ -309,7 +309,7 @@ log "   请仔细检查以上文件和目录的权限,如果权限过高,请及�
 
 
 # 11.检查未授权的SUID/SGID文件
-echo "11.检查未授权的SUID/SGID文件"
+echo -e "\033[33;1m 11.检查未授权的SUID/SGID文件 \033[0m"
 files=
 for PART in `grep -v "^#" /etc/fstab | awk '($6 != "0") {print $2 }'`;
 do
@@ -335,7 +335,7 @@ else
 fi
 
 # 12.检查任何人都有写权限的目录
-echo "12.检查任何人都有写权限的目录"
+echo -e "\033[33;1m 12.检查任何人都有写权限的目录 \033[0m"
 files=
 for PART in `awk '($3 == "ext2" || $3 == "ext3" || $3 == "ext4") {print $2 }' /etc/fstab`;do
     FIND=`find $PART -xdev -type d \( -perm -0002 -a ! -perm -1000 \) -print`
@@ -358,7 +358,7 @@ fi
 
 
 # 13.检查任何人都有写权限的文件
-echo "13.检查任何人都有写权限的文件"
+echo -e "\033[33;1m 13.检查任何人都有写权限的文件 \033[0m"
 files=
 for PART in `grep -v "#" /etc/fstab | awk '($6 != "0") {print $2 }'`; do
     FIND=`find $PART -xdev -type f \( -perm -0002 -a ! -perm -1000 \) -print `
@@ -380,7 +380,7 @@ else
 fi
 
 # 14.检查没有属主的文件
-echo "14.检查没有属主的文件"
+echo -e "\033[33;1m 14.检查没有属主的文件 \033[0m"
 files=
 for PART in `grep -v "#" /etc/fstab | awk '($6 != "0") {print $2 }'`; do
     FIND=`find $PART -nouser -o -nogroup -print `
@@ -402,7 +402,7 @@ else
 fi
 
 # 15.检查异常的隐藏文件
-echo "15.检查异常的隐藏文件"
+echo -e "\033[33;1m 15.检查异常的隐藏文件 \033[0m"
 files=
 FIND=`find / -name "..*" -print -xdev `
 if [ "$FIND" != "" ]
@@ -427,7 +427,7 @@ else
 fi
 
 # 16.检查登录超时设置
-echo "16.检查登录超时设置"
+echo -e "\033[33;1m 16.检查登录超时设置 \033[0m"
 tmout=`cat /etc/profile | grep -v "^#" | grep TMOUT `
 if [ "$tmout" == "" ]
 then
@@ -440,14 +440,14 @@ else
 fi
 
 # 17. 检查ssh 和telnet运行状态
-echo "17.检查ssh 和telnet运行状态"
+echo -e "\033[33;1m 17.检查ssh 和telnet运行状态 \033[0m"
 ssh=`systemctl status sshd | grep running`
 telnet=`systemctl status telnet | grep running`
 if [ "$ssh" != "" ] && [ "$telnet" == "" ]
 then
-    log "17.ssh telnet 未开启,安全"
+    log "17.telnet 未开启,安全"
 else
-    log "17.ssh telnet 开启,不安全"
+    log "17.telnet 开启,不安全"
     log "检查结果如下:"
     if [ "$ssh" == "" ]
     then
@@ -461,7 +461,7 @@ fi
 
 
 # 18. 远程登录限制
-echo "18.远程登录限制"
+echo -e "\033[33;1m 18.远程登录限制 \033[0m"
 permit=`cat /etc/ssh/sshd_config | grep -v "^#" | grep "PermitRootLogin" | awk "{print $2}"`
 login_arg1=`cat /etc/ssh/sshd_config | grep -v "^#" | grep "UseDNS" | awk "{print $2}"`
 login_arg2=`cat /etc/ssh/sshd_config | grep -v "^#" | grep "GSSAPIAuthentication" | awk "{print $2}"`
@@ -491,7 +491,7 @@ fi
 
 
 # 19. 检查运行的服务
-echo "19.检查运行的服务"
+echo -e "\033[33;1m 19.检查运行的服务 \033[0m"
 chkconfig=`which chkconfig`
 if [ "$chkconfig" == "" ]
 then
@@ -534,7 +534,7 @@ else
 fi
 
 # 20. 检查core dump 状态
-echo "20.检查core dump 状态 "
+echo -e "\033[33;1m 20.检查core dump 状态 \033[0m"
 SOFTFIND=`cat /etc/security/limits.conf | grep "^*.*soft.*core.*0"`
 HARDFIND=`cat /etc/security/limits.conf | grep "^*.*hard.*core.*0"`
 if [ "$SOFTFIND" != "" ] && [ "$HARDFIND" != "" ]
@@ -549,7 +549,7 @@ else
 fi
 
 # 21. 检查rsyslog状态
-echo "21.检查rsyslog状态"
+echo -e "\033[33;1m 21.检查rsyslog状态 \033[0m"
 en=`systemctl is-enabled rsyslog`
 conf=`cat /etc/rsyslog.conf | grep -v "^#" | grep "*.err;kern.debug;daemon.notice /var/adm/messages"`
 if [ "$en" != "enabled" ]
@@ -579,7 +579,7 @@ else
 fi
 
 # 22. 检查系统默认账户
-echo "22.检查系统默认账户"
+echo -e "\033[33;1m 22.检查系统默认账户 \033[0m"
 account=`awk -F: '($3 > 500) {print $1}' /etc/passwd`
 uid=`awk -F: '($3 > 500) {print $3}' /etc/passwd`
 
@@ -596,8 +596,10 @@ fi
 
 
 # 23. 检查ftp服务状态
-echo "23.检查ftp服务状态"
-if pa aux |grep ftp;then
+echo -e "\033[33;1m 23.检查ftp服务状态 \033[0m"
+check_ftp=`ps aux |grep ftp`
+if [ $check_ftp  ]
+then
     log "23.ftp服务状态检测,不安全"
     log "建议:"
     log "    ftp服务正在运行,请关闭"
@@ -606,7 +608,7 @@ else
 fi
 
 # 24. 检查内核参数配置
-echo "24.检查内核参数"
+echo -e "\033[33;1m 24.检查内核参数 \033[0m"
 kernel_arg1=`cat /etc/sysctl.conf |grep "net.ipv4.conf.default.send_redirects=0" |wc -l`
 kernel_arg2=`cat /etc/sysctl.conf |grep "net.ipv4.conf.default.accept_redirects=0" |wc -l`
 if [ $kernel_arg1 == 0 ] || [ $kernel_arg2 == 0 ]
@@ -630,7 +632,7 @@ echo "25.检查icmp配置,跳过"
 #icmp_arg=`cat /etc/sysctl.conf |grep "net.ipv4.icmp_echo_ignore_all = 1" |wc -l`
 #if [ $icmp_arg == 0 ]
 #then
-#    log "25.检查icmp配置,未忽略icmp广播,不安全"
+#    log "25.检查icmp配置,未忽略icmp请求,不安全"
 #    log "检查结果如下:"
 #    log "  net.ipv4.icmp_echo_ignore_all参数设置错误或不存在"
 #    log "建议:"
@@ -642,7 +644,7 @@ echo "25.检查icmp配置,跳过"
 #fi
 
 # 26. 检查定时任务
-echo "26.检查定时任务"
+echo -e "\033[33;1m 26.检查定时任务\033[0m"
 crontab_list=`cat /etc/passwd | cut -f 1 -d : |xargs -I {} crontab -l -u {}`
 if [  "$crontab_list" != ""  ]
 then
@@ -652,11 +654,11 @@ then
     log "建议:"
     log "  非法定时任务请使用crontab -r user 删除该用户定时任务"
 else
-    log "26.没有定时任务,跳过"
+    log "26.没有定时任务,安全"
 fi
 
 # 27. 检查banner信息
-echo "27.检查banner信息"
+echo -e "\033[33;1m 27.检查banner信息 \033[0m"
 banner_info=`cat /etc/motd |grep "centos"`
 if [ $banner_info != "" ]
 then
@@ -672,7 +674,7 @@ else
 fi
 
 # 28. 检查时间戳配置
-echo "28.检查history时间戳是否配置"
+echo -e "\033[33;1m 28.检查history时间戳是否配置 \033[0m"
 history_value=`cat /etc/profile |grep "export HISTTIMEFORMAT"`
 if [ $history_value == "" ]
 then
@@ -688,7 +690,7 @@ fi
 
 
 # 29. 检查系统默认ttl值
-echo "29.检查系统默认的ttl值"
+echo -e "\033[33;1m 29.检查系统默认的ttl值 \033[0m"
 ttl_value=`sysctl -a |grep -i net.ipv4.ip_default_ttl | awk -F= '($2 == 64){print $2}'`
 if [ $ttl_value != "" ]
 then
@@ -703,7 +705,7 @@ fi
 
 
 # 30. 检查是否禁止ssh的cbc分组加密
-echo "30.检查是否禁止ssh的cbc分组加密"
+echo -e "\033[33;1m 30.检查是否禁止ssh的cbc分组加密 \033[0m"
 check_cbc=`cat /etc/ssh/sshd_config |grep "^Ciphers"`
 if [ $check_cbc == "" ]
 then
@@ -717,4 +719,4 @@ else
 fi
 
 
-echo "检查完成, 请仔细阅读${logfile}文件"
+echo -e "\033[37;5m 检查完成, 请仔细阅读${logfile}文件\033[0m"

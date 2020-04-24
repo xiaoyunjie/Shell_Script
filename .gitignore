@@ -4,7 +4,8 @@
 /unit_test
 *~
 *.DS_Store
-
+*.bak
+backup
 .idea/
 
 # Created by https://www.gitignore.io/api/macos,linux,django,python,pycharm
