@@ -7,6 +7,7 @@
 *.bak
 backup
 .idea/
+git-vergen
 
 # Created by https://www.gitignore.io/api/macos,linux,django,python,pycharm
 
