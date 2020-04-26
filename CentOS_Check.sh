@@ -1,4 +1,4 @@
-#!/bin/bashi
+#!/bin/bash
 
  #================================================================
  #   Copyright (C) 2020 Sangfor Ltd. All rights reserved.
