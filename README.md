@@ -90,5 +90,5 @@ sh CentOS_Check.sh
 ## 2. 使用加固功能   
 执行CentOS_Reinforce.sh脚本进行系统安全加固
 ```bash
-sudo sh CentOS_Protective_Script.sh  
+sudo sh CentOS_Reinforce.sh  
 ```
