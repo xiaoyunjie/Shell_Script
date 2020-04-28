@@ -1,4 +1,10 @@
-Date:   2019-04-13
+Date: 2020-04-28
+文件更新: Centos-Reinforce.sh
+1.提交Centos_Reinforce.sh初版
+2.基于CentOS_Protective_Script.sh文件,增加和优化了一些加固项
+
+-----------------------
+Date:   2020-04-13
 文件更新 ： CentOS_Check.sh
 1. 修改文件名 CentOS_Check_Script.sh 为 CentOS_Check.sh
               Centos_Protective_Script.sh 为 Centos_Reinforce.sh
