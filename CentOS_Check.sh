@@ -233,7 +233,7 @@ else
 fi
 
 # 8.远程连接安全性
-echo -e "\033[33;1m 8.远程连接安全性 [0m"
+echo -e "\033[33;1m 8.远程连接安全性 \033[0m"
 netrc=`find / -name .netrc`
 rhosts=`find / -name .rhosts`
 failed="0"

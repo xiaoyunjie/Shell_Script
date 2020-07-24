@@ -109,7 +109,7 @@ function password(){
     expiry_config=`grep -i "^PASS_MAX_DAYS.*90" $login_defs_file`
     if [ "$expiry_config" == "" ]
     then
-        sed -i "s/^PASS_MAX_DAYS.*$/PASS_MAX_DAYS  90" $login_defs_file
+        sed -i "s/^PASS_MAX_DAYS.*$/PASS_MAX_DAYS  90/g" $login_defs_file
         echo -e "\033[1;33m [success] The password is set to last for 90 days \033[0m"
     fi
 
