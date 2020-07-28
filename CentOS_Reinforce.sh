@@ -427,7 +427,7 @@ function logon(){
     echo "#########################################################################################"
 # 禁用ftp
     check_ftp=`ps aux |grep ftp`
-    if [ $check_ftp ]
+    if [ -n "$check_ftp" ]
     then
         systemctl stop vsftp
         chkconfig vsftpd off
@@ -438,7 +438,7 @@ function logon(){
             exit 1
         fi
     else
-        echo -e "\033[31;5m     [success] FTP is disable already \033[0m"
+        echo -e "\033[33;1m     [success] FTP is disable already \033[0m"
     fi
 # 禁用telnet
     check_telnet=`ps aux |grep telnet`
@@ -453,7 +453,7 @@ function logon(){
             exit 1
         fi
     else
-        echo -e "\033[31;5m     [success] Telnet is disable already \033[0m"
+        echo -e "\033[33;1m     [success] Telnet is disable already \033[0m"
     fi
 # 设置banner信息相关文件权限为644
     chmod 644 /etc/issue
@@ -461,7 +461,7 @@ function logon(){
     chmod 644 /etc/motd
     if [ $? == 0 ]
     then
-        echo -e "\033[31;5m    [success] The permission for the banner information file has been set to 644 \033[0m"
+        echo -e "\033[33;1m    [success] The permission for the banner information file has been set to 644 \033[0m"
     else
         echo -e "\033[31;5m    [error] The permission for the banner information file has been set failed \033[0m"
     fi
