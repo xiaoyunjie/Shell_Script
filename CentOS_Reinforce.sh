@@ -423,14 +423,14 @@ function logon(){
 
  function set_other(){
     echo "#########################################################################################"
-    echo -e "\033[1;36m     10、Set other \n1.禁用ftp\n2.禁用telnet\n3.禁止root以外用户设置banner信息      \033[0m"
+    echo -e "\033[1;36m     10、Set other \n\t1.禁用ftp\n\t2.禁用telnet\n\t3.禁止root以外用户设置banner信息      \033[0m"
     echo "#########################################################################################"
 # 禁用ftp
-    check_ftp=`ps aux |grep ftp`
-    if [ -n "$check_ftp" ]
+    check_ftp=`ps -aux |grep vsftpd |grep -v "grep" |wc -l`
+    if [ $check_ftp -gt 0 ]
     then
-        systemctl stop vsftp
-        chkconfig vsftpd off
+        systemctl stop vsftpd
+        pkill -9 vsftpd
         if [ $? == 0 ];then
             echo -e "\033[33;1m     [success] Set disable FTP success  \033[0m"
         else
@@ -441,8 +441,8 @@ function logon(){
         echo -e "\033[33;1m     [success] FTP is disable already \033[0m"
     fi
 # 禁用telnet
-    check_telnet=`ps aux |grep telnet`
-    if [ $check_telnet ]
+    check_telnet=`ps -aux |grep telnet |grep -v "grep" |wc -l`
+    if [ $check_telnet -gt 0 ]
     then
         systemctl stop telnet
         chkconfig telnetd off
