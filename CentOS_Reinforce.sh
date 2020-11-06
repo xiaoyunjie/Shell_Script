@@ -41,6 +41,8 @@ fi
 function restart_ssh(){
     if [ $restart_flag == 0 ];then
         echo -e "\033[5;31mPlease restart SSH service manully by using 'service sshd restart' or 'systemctl restart sshd'\033[0m"
+        echo -e "\033[5;31mIf firewall is turned on, you need to add the specified port to the firewall rule\033[0m"
+        echo -e "\033[5;31mUsage: firewall-cmd --zone=public --add-port=20022/tcp --permanent\033[0m"
     fi
 }
 
@@ -302,6 +304,12 @@ function ssh_port(){
     echo "#########################################################################################"
     echo -e "\033[1;36m	    6、set ssh port	\033[0m"
     echo "#########################################################################################"
+    echo "Checking dependencies......"
+    rpm -qa |grep libsemanage-python > /dev/null
+    if [ $? != 0 ];then
+        echo "Dependencies are being installed, please wait......."
+        yum -y install policycoreutils-python > /dev/null
+    fi
     read -p 'change ssh port?[y/n]:'
     case $REPLY in
     y)
@@ -321,10 +329,12 @@ function ssh_port(){
 		    grep -i "^#Port " /etc/ssh/sshd_config > /dev/null
 		    if [ $? == 0 ];then
 		        sed -i "s/^#Port.*$/Port $port/g" /etc/ssh/sshd_config
+                semanage port -a -t ssh_port_t -p tcp $port
 		    else
 		        grep -i "^Port " /etc/ssh/sshd_config > /dev/null
 		        if [ $? == 0 ];then
 			        sed -i "s/^Port.*$/Port $port/g" /etc/ssh/sshd_config
+                    semanage port -a -t ssh_port_t -p tcp $port
 		        else
 			        echo "Port $port" >> /etc/ssh/sshd_config
 		        fi
