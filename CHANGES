@@ -1,3 +1,9 @@
+Date: 2020-11-06
+文件更新: Centos-Reinforce.sh
+1.新增seliux的检测安装，新增ssh放行端口
+2.ssh端口修改后提示新增firewall提示，关闭或开放端口
+
+-----------------------
 Date: 2020-04-28
 文件更新: Centos-Reinforce.sh
 1.提交Centos_Reinforce.sh初版
