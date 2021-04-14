@@ -1,3 +1,9 @@
+Date: 2021-04-14
+文件更新: Centos-Reinforce.sh/CentOS_Check.sh
+1.禁止密码登陆，启用密钥登陆
+2.禁止root用户本地登陆
+
+----------------------
 Date: 2020-11-06
 文件更新: Centos-Reinforce.sh
 1.新增seliux的检测安装，新增ssh放行端口
