@@ -132,6 +132,7 @@ log " "
 
 echo -e "\033[33;1m 系统安全基线检测开始....\033[0m"
 log ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>开始系统安全检查<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+<<'COMMENT' 注释此段原因：系统变为密钥登陆，禁用密码登录
 # 1. 检测密码有效期设置
 echo -e "\033[33;1m 1.检测密码有效期设置\033[0m"
 PASS_MAX_DAYS=`cat /etc/login.defs | grep "PASS_MAX_DAYS" | grep -v \# | awk '{print$2}'`
@@ -184,7 +185,56 @@ then
 else
     log "4.已配置账户锁定,安全"
 fi
+COMMENT
 
+# 1. 检查是否禁用密码登陆
+echo -e "\033[33;1m 1.检查是否禁用密码登陆 \033[0m"
+passwd_auth=`cat /etc/ssh/sshd_config | grep -v "^#" | grep "PasswordAuthentication" | awk "{print $2}"`
+if [[ "$passwd_auth" =~ "no" ]]
+then
+    log  "1.已禁止密码登陆,安全"
+else
+    log " 1.密码登录未禁用,不安全"
+    log  "建议:"
+    log  "  修改/etc/ssh/sshd_config文件, 将PasswordAuthentication的值改为 no"
+    log  "  重启ssh服务: systemctl restart sshd"
+fi
+
+# 2. 检查是否启用密钥登陆
+echo -e "\033[33;1m 2.检查是否启用密钥登陆 \033[0m"
+pubkey_auth=`cat /etc/ssh/sshd_config | grep -v "^#" | grep "PubkeyAuthentication" | awk "{print $2}"`
+if [[ "$pubkey_auth" =~ "yes" ]]
+then
+    log  "2.已启用密钥登陆,安全"
+else
+    log " 2.未启用密钥登陆,不安全"
+    log  "建议:"
+    log  "  修改/etc/ssh/sshd_config文件, 将PubkeyAuthentication的值改为 yes"
+    log  "  重启ssh服务: systemctl restart sshd"
+fi
+# 3. 检查是否禁用root账户本地登陆
+echo -e "\033[33;1m 3.检查是否禁止root账户本地登陆 \033[0m"
+local_root=`cat /etc/pam.d/login | grep 'auth required pam_succeed_if.so user != root quiet'`
+if [[ "$local_root" == "" ]];
+then
+    log "3.未配置禁止root本地直接登陆,不安全"
+    log "建议:"
+    log "  请在/etc/pam.d/echoin文件最后添加一行auth required pam_succeed_if.so user != root quiet"
+else
+    log "3.已配禁止root账户本地直接登陆,安全"
+fi
+# 4. 检查是否存在develop预置账户
+echo -e "\033[33;1m 4.检查是否添加预置账户 \033[0m"
+user="develop"
+user_exist=`cat /etc/passwd |cut -f 1 -d : |grep $user`
+if [[ $user_exist != $user ]]
+then
+    log "4.未配置预置账户,不安全"
+    log "建议:"
+    log "  请联系开发创建预置账户"
+else
+    log "4.已配预置账户,安全"
+fi
 
 # 5.检查除root之外的账户UID为0
 echo -e "\033[33;1m 5.检查除root之外的账户UID为0 \033[0m"

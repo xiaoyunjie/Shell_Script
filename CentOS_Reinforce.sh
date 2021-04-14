@@ -169,8 +169,8 @@ function create_user(){
 }
 
 
-############################限制超级管理员用户远程登录############################
-function remote_login(){
+############################限制超级管理员用户登录############################
+function ssh_login(){
     echo "#########################################################################################"
     echo -e "\033[1;36m	   4、Set Remote Login Configuration(SSH)	\033[0m"
     echo "#########################################################################################"
@@ -225,7 +225,8 @@ function remote_login(){
     fi
 
 # 禁止远程登录root账户
-    read -p "Disable root remote login?[y/n](Please make sure you have created at least one another account):"
+    echo "即将禁止root远程及本地登陆，请确保你已经创建其他用户可用于登陆"
+    read -p "Disable root login?[y/n](Please make sure you have created at least one another account):"
     case $REPLY in
     y)
 	grep -i '^PermitRootLogin no' /etc/ssh/sshd_config > /dev/null
@@ -247,13 +248,29 @@ function remote_login(){
 	else
 	    echo -e "\033[33;1m	  [success] Already disable root remote login	\033[0m"
 	fi
+        local_root=`cat /etc/pam.d/login | grep 'auth required pam_succeed_if.so user != root quiet'`
+        if [[ "$local_root" == "" ]];
+        then
+            sed -i '$a auth required pam_succeed_if.so user != root quiet' /etc/pam.d/login
+            echo -e "\033[33;1m         [success] Disable root local login     \033[0m"
+        else
+            echo -e "\033[33;1m   [success] Already disable root local login   \033[0m"
+        fi
 	;;
     n)
         ;;
     *)
-        remote_login
+        ssh_login
 	;;
     esac
+    
+}
+
+####################### 关闭密码登陆,开启密钥登陆##############################
+function modify_ssh(){
+    sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+    echo -e "\033[1;33m     [success] Disable password login, enable key login   \033[0m" 
 }
 
 #######################配置系统历史命令操作记录和定时帐户自动登出时间################################
@@ -357,19 +374,19 @@ function ssh_port(){
 }
 
 #######################登录失败超次数处理################################
-function logon(){
+function login(){
     echo "#########################################################################################"
-    echo -e "\033[1;36m	    7、set logon failure handling		\033[0m"
+    echo -e "\033[1;36m	    7、set login failure handling		\033[0m"
     echo "#########################################################################################"
-    logonconfig=/etc/pam.d/sshd
-    read -p 'Are you sure set logon failure handling?[y/n]:'
+    loginconfig=/etc/pam.d/sshd
+    read -p 'Are you sure set login failure handling?[y/n]:'
     case $REPLY in
     y)
-	grep -i "^auth.*required.*pam_tally2.so.*$" $logonconfig  > /dev/null
+	grep -i "^auth.*required.*pam_tally2.so.*$" $loginconfig  > /dev/null
 	if [ $? == 0 ];then
-	   sed -i "s/auth.*required.*pam_tally2.so.*$/auth required pam_tally2.so deny=3 unlock_time=300 even_deny_root root_unlock_time=300/g" $logonconfig > /dev/null
+	   sed -i "s/auth.*required.*pam_tally2.so.*$/auth required pam_tally2.so deny=3 unlock_time=300 even_deny_root root_unlock_time=300/g" $loginconfig > /dev/null
     else
-	   sed -i '/^#%PAM-1.0/a\auth required pam_tally2.so deny=3 unlock_time=300 even_deny_root root_unlock_time=300' $logonconfig > /dev/null
+	   sed -i '/^#%PAM-1.0/a\auth required pam_tally2.so deny=3 unlock_time=300 even_deny_root root_unlock_time=300' $loginconfig > /dev/null
     fi
 
 	if [ $? == 0 ];then
@@ -384,7 +401,7 @@ function logon(){
 	;;
     *)
 	echo -e "\033[31;5m   [Error]:invalid input       \033[0m"
-	logon
+	login
 	;;
     esac
 }
@@ -401,8 +418,8 @@ function logon(){
 # 屏蔽ip重定向功能
      grep -i "^net.ipv4.conf.default.send_redirects=.*$" $kernel_parameters_config  > /dev/null
      if [ $? == 0 ];then
-        sed -i "s/net.ipv4.conf.default.send_redirects=.*/net.ipv4.conf.default.send_redirects=0/g" $logonconfig > /dev/null
-        sed -i "s/net.ipv4.conf.default.accept_redirects=.*/net.ipv4.conf.default.accept_redirects=0/g" $logonconfig > /dev/null
+        sed -i "s/net.ipv4.conf.default.send_redirects=.*/net.ipv4.conf.default.send_redirects=0/g" $loginconfig > /dev/null
+        sed -i "s/net.ipv4.conf.default.accept_redirects=.*/net.ipv4.conf.default.accept_redirects=0/g" $loginconfig > /dev/null
      else
         echo "net.ipv4.conf.default.send_redirects=0" >> $kernel_parameters_config
         echo "net.ipv4.conf.default.accept_redirects=0" >> $kernel_parameters_config
@@ -426,7 +443,7 @@ function logon(){
      ;;
      *)
      echo -e "\033[31;5m    [Error] invalid input       \033[0m"
-     logon
+     login
      ;;
      esac
  }
@@ -485,7 +502,7 @@ function main(){
 #         1:ALL protective                                                              #
 #         2:Set Password Complexity Requirements                                        #
 #         3:Create eproot account                                                       #
-#         4:Set Remote Login Configuration(SSH)                                         #
+#         4:Set SSH  Login Configuration(SSH)                                           #
 #         5:Set Shell History and TMOUT                                                 #
 #         6:Set SSH Port                                                                #
 #         7:Set Logon failure handling                                                  #
@@ -499,10 +516,11 @@ function main(){
     1)
         password
 	    #create_user
-        remote_login
+        ssh_login
+        modify_ssh
         set_history_tmout
         ssh_port
-	    logon
+	login
         set_kernel_args
         set_other
         restart_ssh
@@ -514,7 +532,8 @@ function main(){
         create_user
 	;;
     4)
-        remote_login
+        ssh_login
+        modify_ssh  
         restart_ssh
 	;;
     5)
@@ -525,7 +544,7 @@ function main(){
         restart_ssh
 	;;
     7)
-	logon
+	login
         restart_ssh
 	;;
     8)
