@@ -14,6 +14,14 @@
 #########################初始变量#################################
 restart_flag=1
 ostype='unknow'
+# 设置环境变量
+path=`cat /etc/profile |grep 'PATH="$PATH:/usr/local/bin"' >/dev/null 2>&1`
+if [ $? -eq 0  ];then
+    echo -e "\033[1;33m System current environment variables ：\n     $PATH      \033[0m"
+else
+    sed -i '$a PATH="$PATH:/usr/local/bin"\nexport PATH' /etc/profile
+    souce /etc/profile
+fi
 ###########################系统类型判断############################
 if [ -f /etc/redhat-release ];then
     grep -i 'centos' /etc/redhat-release > /dev/null
@@ -263,14 +271,14 @@ function ssh_login(){
         ssh_login
 	;;
     esac
-    
+
 }
 
 ####################### 关闭密码登陆,开启密钥登陆##############################
 function modify_ssh(){
     sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-    echo -e "\033[1;33m     [success] Disable password login, enable key login   \033[0m" 
+    echo -e "\033[1;33m     [success] Disable password login, enable key login   \033[0m"
 }
 
 #######################配置系统历史命令操作记录和定时帐户自动登出时间################################
@@ -533,7 +541,7 @@ function main(){
 	;;
     4)
         ssh_login
-        modify_ssh  
+        modify_ssh
         restart_ssh
 	;;
     5)
