@@ -128,23 +128,23 @@ fi
 ################################新增超级管理员用户################################
 function create_user(){
     echo "#########################################################################################"
-    echo -e "\033[1;31m	   3、Create eproot account	\033[0m"
+    echo -e "\033[1;31m	   3、Create openroot account	\033[0m"
     echo "#########################################################################################"
-    read -p "Be sure to create an eproot account?[y/n]:"
+    read -p "Be sure to create an openroot account?[y/n]:"
     case $REPLY in 
     y)
-	grep -i 'eproot' /etc/passwd
+	grep -i 'openroot' /etc/passwd
         if [ $? == 0 ];then
-	    echo -e "\033[1;31m		An eproot account has been created	\033[0m"
+	    echo -e "\033[1;31m		An openroot account has been created	\033[0m"
         else
 	    read -p "Please enter your password:" PASSWD
-	    useradd -g root eproot;echo "$PASSWD" | passwd --stdin eproot  > /dev/null
+	    useradd -g root openroot;echo "$PASSWD" | passwd --stdin openroot  > /dev/null
 	    if [ $? == 0 ];then
-		echo -e "\033[1;31m	eproot account created successfully	    \033[0m"
-		grep -i "eproot" /etc/sudoers
+		echo -e "\033[1;31m	openroot account created successfully	    \033[0m"
+		grep -i "openroot" /etc/sudoers
 		if [ $? != 0 ];then
 		    chmod u+w /etc/sudoers > /dev/null 
-		    sed -i '/^root.*ALL=(ALL).*$/a\eproot  ALL=(ALL)       NOPASSWD:ALL' /etc/sudoers > /dev/null
+		    sed -i '/^root.*ALL=(ALL).*$/a\openroot  ALL=(ALL)       NOPASSWD:ALL' /etc/sudoers > /dev/null
 		    if [ $? == 0 ];then
 			echo -e "\033[37;5m	    [Permissions set success]	\033[0m"
 		    else
@@ -155,7 +155,7 @@ function create_user(){
 		    echo -e "\033[1;31m	    Permissions have already been set	    \033[0m"
 		fi
 	    else
-		echo -e "\033[1;31m	    eproot account created failed	    \033[0m"
+		echo -e "\033[1;31m	    openroot account created failed	    \033[0m"
 		exit 1 
 	    fi
 	fi
@@ -354,7 +354,7 @@ function main(){
 #                                        Menu                                           #
 #         1:ALL protective                                                              #
 #         2:Set Password Complexity Requirements                                        #
-#         3:Create eproot account                                                       #
+#         3:Create openroot account                                                       #
 #         4:Set Remote Login Configuration(SSH)                                         #
 #         5:Set Shell History and TMOUT                                                 #
 #         6:Set SSH Port                                                                #

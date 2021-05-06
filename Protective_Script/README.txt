@@ -14,7 +14,7 @@
 功能说明:
 1、ALL protective			一键进行全部加固
 2、Set Password Complexity Requirements 设置密码复杂度
-3、Create eproot account		添加eproot账号
+3、Create openroot account		添加openroot账号
 4、Set Remote Login Configuration(SSH)	禁止root远程登入
 5、Set Shell History and TMOUT		设置history保存行数以及命令时间，设置窗口超时时间
 6、Set SSH Port				更改SSH端口
@@ -40,7 +40,7 @@ Date:	2019-03-08
 ------------------------
 
 Date:	2019-03-18
-添加新增eproot账号功能，防止系统没有除root账号外的其余账号，配置了禁止root远程，导致系统无法登入
+添加新增openroot账号功能，防止系统没有除root账号外的其余账号，配置了禁止root远程，导致系统无法登入
 
 ----------------------
 

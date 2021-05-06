@@ -54,7 +54,7 @@ sudo sh CentOS_Protective_Script.sh
 **功能说明**
 -  一键进行全部加固
 -  设置密码复杂度
--  添加eproot账号
+-  添加openroot账号
 -  禁止root远程登入
 -  设置history保存行数以及命令时间，设置窗口超时时间
 -  更改SSH端口
